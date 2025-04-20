@@ -1,0 +1,29 @@
+Chapter 1 – Modules, Comments & pip
+
+Chapter 2 – Variables and Datatype
+
+Chapter 3 – Strings
+
+Chapter 4 – Lists and Tuples
+
+Chapter 5 – Dictionary & Sets
+
+Chapter 6 – Conditional Expression
+
+Chapter 7 – Loops in Python
+
+Chapter 8 – Functions & Recursions
+
+Project 1: Snake, Water, Gun Game
+
+Chapter 9 – File I/O
+
+Chapter 10 – Object Oriented Programming
+
+Chapter 11 – Inheritance & more on OOPs
+
+Project 2: The Perfect Guess
+
+Chapter 12 – Advanced Python 1
+
+Chapter 13 – Advanced Python 2
