@@ -1,0 +1,3 @@
+Hello, world! This is a sample text file.
+Feel free to edit and save it as needed.
+python
