@@ -16,9 +16,8 @@ engine = pyttsx3.init()
 
 
 def speak(text):
-
-    # testing
-    engine.say(f"{text}")
+    print(f"Assistant: {text}")
+    engine.say(text)
     engine.runAndWait()
 
 def listen():
@@ -36,8 +35,6 @@ def listen():
     except sr.RequestError:
         #speak("Speech service is unavailable.")
         return ""
-    
-def greeting():
 
 
 def get_latest_news():
@@ -65,7 +62,7 @@ def main():
     print(words)
 
     if any(keyword in words for keyword in ["hello","hi","hey","what's up"]):
-        greeting()
+        speak("hi there how can i help you!")
 
     elif any(keyword in words for keyword in ["headlines","news","articles"]):
         get_latest_news()
