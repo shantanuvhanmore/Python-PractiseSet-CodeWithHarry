@@ -12,6 +12,8 @@ pip install PyAudio
 '''
 # initialisation
 engine = pyttsx3.init()
+NEWS_API_KEY = os.getenv("NEWS_API_KEY")
+WEATHER_API_KEY = os.getenv("WEATHER_API_KEY")
 
 
 
@@ -37,14 +39,40 @@ def listen():
         return ""
 
 
-def get_latest_news():
+def get_latest_news(num_articles=3, country='us'):
+    url = f"https://newsapi.org/v2/top-headlines?country={country}&apiKey={NEWS_API_KEY}"
+    try:
+        response = requests.get(url)
+        data = response.json()
+        if data['status'] == 'ok':
+            articles = data['articles'][:num_articles]
+            for i, article in enumerate(articles, 1):
+                speak(f"Headline {i}: {article['title']}")
+        else:
+            speak("Couldn't fetch news.")
+    except Exception:
+        speak("Error while getting news.")
 
 
 def get_time():
 
 def date():
 
-def get_weather():
+def get_weather(city):
+    try:
+        geo_url = f"http://api.openweathermap.org/geo/1.0/direct?q={city}&limit=1&appid={WEATHER_API_KEY}"
+        geo_data = requests.get(geo_url).json()
+        if not geo_data:
+            speak(f"Couldn't find location {city}.")
+            return
+        lat, lon = geo_data[0]['lat'], geo_data[0]['lon']
+        weather_url = f"https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid={WEATHER_API_KEY}&units=metric"
+        weather_data = requests.get(weather_url).json()
+        temp = weather_data['main']['temp']
+        condition = weather_data['weather'][0]['description']
+        speak(f"The current temperature in {city} is {temp}°C with {condition}.")
+    except:
+        speak("Couldn't retrieve weather data.")
 
 def play_song():
 
