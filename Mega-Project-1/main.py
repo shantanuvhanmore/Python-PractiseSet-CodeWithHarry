@@ -204,12 +204,12 @@ def command_handler(command):
 # main function for logic
 def main():
     start = True
-    speak("Say 'mark' to activate me")
+    speak("Say 'moto' to activate me")
 
     while start:
         command = listen()
 
-        if "mark" in command:
+        if "moto" in command:
             speak("Listening...")
             
             while True:
