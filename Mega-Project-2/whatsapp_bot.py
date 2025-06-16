@@ -1,6 +1,7 @@
 import pyautogui
 import pyperclip
 import time
+import re
 import os
 import openai  # Make sure you set your API key below or via environment
 
@@ -15,15 +16,29 @@ def click_at(x, y, t=0.5):
 
 # Function to check if last message was sent by a specific sender
 def last_is_sender(sender_name, chat):
-    log = chat.split("2025")
-    print(log)
-    print("--------")
-    print(log[-1])
-    if sender_name.lower() in log[-1].lower():
-        print("true")
-        return True
-    else:
-        print("false")
+    lines = chat.strip().split('\n')
+    last_message = ""
+    
+    # Go in reverse to find the last message that starts with a timestamp
+    for i in range(len(lines) - 1, -1, -1):
+        if re.match(r"\[\d{2}-\d{2}-\d{4} \d{2}:\d{2}\]", lines[i]):
+            # Found the beginning of the last message
+            last_message = lines[i]
+            # Check if the next lines (until next timestamp or end) are part of it
+            j = i + 1
+            while j < len(lines) and not re.match(r"\[\d{2}-\d{2}-\d{4} \d{2}:\d{2}\]", lines[j]):
+                last_message += " " + lines[j]
+                j += 1
+            break
+
+    # Extract the sender name from the message
+    try:
+        start = last_message.index("] ") + 2
+        end = last_message.index(":", start)
+        sender = last_message[start:end].strip()
+        return sender.lower() == sender_name.lower()
+    except ValueError:
+        print(f"Could not extract sender name and last message was '{last_message}'")
         return False
 
 # Function to call OpenAI and get a response
@@ -56,8 +71,10 @@ def get_openai_response(prompt):
 def main():
 
     sender_name = input("Enter who do you want to message: ")
-    # Initial click at (705, 743)
-    click_at(705, 743, 4.0)
+    # opening whatspp
+    pyautogui.keyDown('winleft')
+    pyautogui.press('2')
+    pyautogui.keyUp('winleft')
 
     #search bar 
     pyautogui.hotkey('ctrl', 'f')
