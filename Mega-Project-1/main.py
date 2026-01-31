@@ -9,6 +9,8 @@ import vlc
 import time
 from datetime import datetime
 import openai
+from dotenv import load_dotenv
+
 '''
 pip install pyttsx3
 pip install SpeechRecognition
@@ -17,10 +19,13 @@ pip install openai==0.28
 pip install requests
 pip install yt-dlp
 pip install python-vlc
+pip install python-dotenv
 
 '''
-# initialisation
-engine = pyttsx3.init()
+
+# Load environment variables from .env file
+load_dotenv()
+
 NEWS_API_KEY = os.getenv("NEWS_API_KEY")
 WEATHER_API_KEY = os.getenv("WEATHER_API_KEY")
 
@@ -28,12 +33,14 @@ WEATHER_API_KEY = os.getenv("WEATHER_API_KEY")
 
 def speak(text):
     print(f"Assistant: {text}")
+    engine = pyttsx3.init()
     engine.say(text)
     engine.runAndWait()
+    del engine
 
 def listen():
     r = sr.Recognizer()
-    with sr.Microphone() as source:
+    with sr.Microphone(device_index=2) as source:
         print("🎤 Listening...")
         audio = r.listen(source)
     try:
@@ -132,13 +139,13 @@ def play_song(song_name):
         speak("Could not play the song.")
 
 def search_on_yt(input_text):
-    query = input_text[len("play "):-len(" on youtube")]
+    query = input_text[len("play "):-len(" on YouTube")]
     search_url = "https://www.youtube.com/results?search_query=" + urllib.parse.quote(query)
     webbrowser.open(search_url)
 
 def get_openai_response(prompt):
      # Make sure your API key is set in environment variables
-    openai.api_key = os.getenv("OPENAI_API_KEY")
+    openai.api_key = os.getenv("GPT_API_KEY")
 
     # Define your assistant's personality here
     personality = ("skips hi hello and give short reply"
@@ -149,7 +156,7 @@ def get_openai_response(prompt):
 
     try:
         response = openai.ChatCompletion.create(
-            model="gpt-3.5-turbo",  # Use "gpt-4" if you have access
+            model="gpt-4o-mini",  # Use "gpt-4" if you have access
             messages=[
                 {"role": "system", "content": personality},
                 {"role": "user", "content": prompt}
@@ -159,7 +166,7 @@ def get_openai_response(prompt):
         )
         return response['choices'][0]['message']['content'].strip()
     except Exception as e:
-        return f"Error: {e}"
+        print(f"Error: {e}")
 
 def command_handler(command):
     input_text = command
@@ -192,24 +199,27 @@ def command_handler(command):
             speak("Tell me which song to play.")
 
     elif "play" in input_text and "youtube" in input_text :
-        if input_text.startswith("play ") and input_text.endswith(" on youtube"):
+        if input_text.startswith("play ") and input_text.endswith(" on YouTube"):
            search_on_yt(input_text) 
         else:
             print("Invalid input format")
 
-    else:
+    elif "tell" in words and "me" in words:
         speak(get_openai_response(command))
+
+    else:
+        print("I don't understand that command.")
 
 
 # main function for logic
 def main():
     start = True
-    speak("Say 'moto' to activate me")
+    speak("Say 'rock' to activate me")
 
     while start:
         command = listen()
 
-        if "moto" in command:
+        if "rock" in command:
             speak("Listening...")
             
             while True:
